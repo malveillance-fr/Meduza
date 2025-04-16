@@ -1,0 +1,15 @@
+CHANGELOG:
+- Version 1.0 : Project launch
+- Version 1.1 : Added 2 new functions
+- Version 1.2 : bugs fixed
+- Version 1.3 : Banner aded
+- Version 1.4 : Name script : Meduza
+- Version 1.5 : new menu
+- Version 1.6 : color added
+- Version 1.7 : Bio added
+- Version 1.8 : maximize the chances of getting an email
+- Version 1.9 : new strategies adopted
+- Version 2.0 : 2 other startegy aded
+- Version 2.1 : folders added
+- Version 2.2 : This version
+
