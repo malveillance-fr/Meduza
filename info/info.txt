@@ -1,0 +1,33 @@
+
+
+                                        __  _____________  __  _______   ___ 
+                                       /  |/  / ____/ __ \/ / / /__  /  /   |
+                                      / /|_/ / __/ / / / / / / /  / /  / /| |
+                                     / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
+                                    /_/  /_/_____/_____/\____/  /____/_/  |_|
+                                         
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+===========================================
+               MEDUZA - USER PROFILE
+===========================================
+
+[ General Information ]
+- GitHub Username    : johndoe
+- Full Name          : John Doe
+- Bio                : Software Developer passionate about open-source
+- Avatar URL         : https://github.com/johndoe.png
+- Last Update        : 2023-04-14T12:34:56Z
+- Created At         : 2015-06-12T08:22:00Z
+- User ID            : 1234567
+
+[ Email Information ]
+- Email              : johndoe@example.com
+
+===========================================
+      Note: This information is 
+        just a simple example.
+===========================================
