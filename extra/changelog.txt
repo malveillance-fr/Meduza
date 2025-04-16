@@ -14,5 +14,5 @@ CHANGELOG:
 - Version 2.2 : githubapi added with useragents.txt
 - Version 2.3 : code updated
 - Version 2.4 : UA Switched
-- Version 2.5 : This version
-
+- Version 2.5 : Technology updated
+- Version 2.6 : logs system added
