@@ -1,0 +1,116 @@
+
+
+                                        __  _____________  __  _______   ___ 
+                                       /  |/  / ____/ __ \/ / / /__  /  /   |
+                                      / /|_/ / __/ / / / / / / /  / /  / /| |
+                                     / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
+                                    /_/  /_/_____/_____/\____/  /____/_/  |_|
+                                         
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+Introduction
+------------
+Meduza is a Python-based tool designed to help users find public emails associated with GitHub usernames. By leveraging various GitHub data sources such as events, profiles, commits, and third-party websites, Meduza is capable of retrieving emails in an automated way. This tool is especially useful for security researchers, OSINT enthusiasts, and GitHub users seeking to gather publicly available information.
+
+The tool uses several methods to find an email:
+1. GitHub Public Events (e.g., Push Events)
+2. GitHub User Profile
+3. Third-Party Email Search Websites
+4. GitHub Commit Search API
+
+System Requirements
+-------------------
+- Python 3.6 or higher
+- Internet access to interact with the GitHub API and third-party websites
+- pip for dependency management
+
+Dependencies
+------------
+1. requests: A Python library for making HTTP requests.
+2. colorama: A library to add color to the terminal output.
+3. re: Python's built-in library for regular expressions (used to find emails).
+
+Installation
+------------
+1. Clone this repository to your local machine.
+
+   `git clone https://github.com/yourusername/meduza.git`
+
+2. Navigate into the project directory.
+
+   `cd meduza`
+
+3. Install the necessary Python libraries with pip.
+
+   `pip install -r requirements.txt`
+
+4. The script should now be ready to run.
+
+Usage
+------
+1. Launch the program by running the script:
+
+   `python meduza.py`
+
+2. When prompted, enter the GitHub username whose email you want to search.
+
+3. The tool will search through various GitHub sources to find the user's public email.
+
+4. If an email is found, it will be displayed in the terminal. If no email is found, the script will display a message indicating the absence of a public email.
+
+5. You can type `exit` at any time to close the program.
+
+Configuration Files
+-------------------
+The `config` directory contains configuration files to tweak the behavior of Meduza. These files are optional, and modifying them is only necessary if you need to adjust how the program operates, such as adding or changing search methods, customizing output formats, or changing the GitHub API rate limits.
+
+Included Files:
+- `config/settings.json`: Contains general settings such as the user agent string and API rate limits.
+- `config/queries.txt`: A list of preconfigured search queries to speed up searches if needed.
+- `config/filters.json`: Contains email filters and other criteria to refine search results.
+
+How It Works
+-------------
+Meduza works by sending requests to various GitHub APIs and other third-party sites to collect public information about users. The main methods it uses are:
+
+1. **GitHub Public Events**: Meduza retrieves public commit events made by a user. If the commit contains an email, it is extracted and displayed.
+   
+2. **GitHub User Profile**: The tool checks the user’s GitHub profile for any publicly available email.
+   
+3. **Third-Party Website**: Meduza also searches for user emails through the third-party service [emailaddress.github.io](https://emailaddress.github.io/), which can sometimes provide emails linked to a GitHub account.
+   
+4. **Commit Search**: Meduza can search GitHub commit history for emails associated with a user.
+
+Error Handling
+--------------
+Meduza will notify the user if:
+- The GitHub user does not exist.
+- No email could be found (either due to the user not having an email or the email being hidden).
+- API rate limit is exceeded.
+
+The program will gracefully handle errors from GitHub's API or from third-party websites by returning appropriate error messages.
+
+Troubleshooting
+---------------
+If you encounter issues, check the following:
+- Ensure you are connected to the internet.
+- Verify that the GitHub username you entered is valid and public.
+- If the tool isn’t returning any emails, try a different username or give it some time, as the API may be rate-limited.
+
+Credits and Acknowledgements
+----------------------------
+- **Malveillance** (Developer) – Creator of the Meduza tool.
+- **GitHub API** – Used for retrieving public events, commits, and profile information.
+- **emailaddress.github.io** – A third-party service used to find emails linked to GitHub accounts.
+- **requests** – For making HTTP requests.
+- **colorama** – For color output in the terminal.
+
+License
+-------
+Meduza is open-source and distributed under the MIT License. You are free to modify and distribute the tool, provided that you retain the license terms.
+
+For more details, refer to the LICENSE file in this repository.
+
