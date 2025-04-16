@@ -6,6 +6,7 @@ import time
 import threading
 import os
 import random
+import json
 
 init(autoreset=True)
 os.system("title Meduza Terminal")
@@ -15,16 +16,13 @@ ascii_art = r"""
 
                                      
 
-                                              
 
                                                   __  _____________  __  _______   ___ 
                                                  /  |/  / ____/ __ \/ / / /__  /  /   |
                                                 / /|_/ / __/ / / / / / / /  / /  / /| |
                                                / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
                                               /_/  /_/_____/_____/\____/  /____/_/  |_|
-                                         
-
-                                           
+                                                  
 
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
                        [%] STATUS : Work
@@ -183,17 +181,37 @@ def github_email_finder(username):
         github_get_email_from_repos
     ]
 
-    email = None
+    found_emails = set()
     for method in methods:
         email = method(username)
         if email:
-            break
+            found_emails.add(email)
 
-    if not email:
-        email = profile_email
+    if profile_email:
+        found_emails.add(profile_email)
 
     stop_event.set()
     loading_thread.join()
+
+    result = {
+        "profile_info": {
+            "name": globalname,
+            "bio": bio if bio else 'No bio available',
+            "username": displayname,
+            "avatar_url": avatar_url,
+            "last_update": last_update,
+            "created_at": created_at,
+            "user_id": user_id
+        },
+        "emails": list(found_emails)
+    }
+
+
+    log_directory = "logs"
+    os.makedirs(log_directory, exist_ok=True)
+    log_file_path = os.path.join(log_directory, f"{username}.json")
+    with open(log_file_path, "w") as log_file:
+        json.dump(result, log_file, indent=4)
 
     print("\n" + "-"*50)
     print(Fore.CYAN + f"[+] GitHub Profile Information")
@@ -210,13 +228,15 @@ def github_email_finder(username):
     print(Fore.CYAN + f"[+] Sensitive Information:")
     print(Fore.CYAN + f"----------------------------")
     
-    if email:
-        print(Fore.YELLOW + f"Leaked Mail        : {email}")
+    if found_emails:
+        print(Fore.YELLOW + f"[+] Mails Found: {len(found_emails)}")
+        for index, email in enumerate(found_emails, 1):
+            print(Fore.YELLOW + f"\n[{index}] Leaked Mail : {email}")
     else:
-        print(Fore.RED + f"Leaked Mail        : None")
+        print(Fore.RED + "Leaked Mail : None")
     
     noreply_email = f"{user_id}+{username}@users.noreply.github.com"
-    print(Fore.YELLOW + f"Noreply Mail : {noreply_email}")
+    print(Fore.YELLOW + f"\nNoreply Mail    : {noreply_email}")
 
 if __name__ == '__main__':
     while True:
