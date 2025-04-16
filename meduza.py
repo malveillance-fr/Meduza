@@ -5,20 +5,22 @@ import sys
 import time
 import threading
 import os
+import random
 
 init(autoreset=True)
 os.system("title Meduza Terminal")
 
 ascii_art = r"""
+                                            
 
-   
+                                     
 
-                                             __  _____________  __  _______   ___ 
-                                            /  |/  / ____/ __ \/ / / /__  /  /   |
-                                           / /|_/ / __/ / / / / / / /  / /  / /| |
-                                          / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
-                                         /_/  /_/_____/_____/\____/  /____/_/  |_|
-                                                                               
+                                              __  _____________  __  _______   ___ 
+                                             /  |/  / ____/ __ \/ / / /__  /  /   |
+                                            / /|_/ / __/ / / / / / /  / /  /| |
+                                           / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
+                                          /_/  /_/_____/_____/\____/  /____/_/  |_|
+                                         
 
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
                        [%] STATUS : Work
@@ -47,14 +49,38 @@ def loading_animation(stop_event):
         i += 1
     print("\r", end="")
 
-headers = {
-    "Accept": "application/vnd.github+json",
-    "User-Agent": "Meduza-Email-Finder"
-}
+def load_user_agents_from_file(file_path):
+    try:
+        with open(file_path, "r") as file:
+            user_agents = file.readlines()
+            user_agents = [ua.strip() for ua in user_agents if ua.strip()]
+        if not user_agents:
+            raise ValueError("The file is empty or does not contain valid User Agents.")
+        return user_agents
+    except Exception as e:
+        print(Fore.RED + f"Error loading User Agents: {e}")
+        return []
+
+def get_random_user_agent(user_agents):
+    if not user_agents:
+        return None 
+    return random.choice(user_agents)
+
+user_agents_file_path = "githubapi/useragents.txt"
+user_agents = load_user_agents_from_file(user_agents_file_path)
+
+if not user_agents:
+    print(Fore.RED + "No valid User Agent found, the program will stop.")
+    sys.exit(1)
 
 def github_get_user_info(username):
     url = f"https://api.github.com/users/{username}"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": get_random_user_agent(user_agents)
+    }
     response = requests.get(url, headers=headers)
+    print(f"Response Status: {response.status_code}") 
     if response.status_code == 200:
         data = response.json()
         globalname = data.get("name") or username
@@ -70,6 +96,9 @@ def github_get_user_info(username):
 
 def github_get_email_from_events(username):
     url = f"https://api.github.com/users/{username}/events/public"
+    headers = {
+        "User-Agent": get_random_user_agent(user_agents)
+    }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         events = response.json()
@@ -88,7 +117,7 @@ def github_get_email_from_emailaddress_site(username):
         url = f"https://emailaddress.github.io/?user={username}"
         response = requests.get(url)
         if "Good news!" in response.text:
-            emails = re.findall(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+", response.text)
+            emails = re.findall(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", response.text)
             for email in emails:
                 if "noreply" not in email:
                     return email
@@ -98,7 +127,11 @@ def github_get_email_from_emailaddress_site(username):
 
 def github_get_email_from_commit_search(username):
     url = f"https://api.github.com/search/commits?q=author:{username}"
-    response = requests.get(url, headers={"Accept": "application/vnd.github.cloak-preview"})
+    headers = {
+        "Accept": "application/vnd.github.cloak-preview",
+        "User-Agent": get_random_user_agent(user_agents)
+    }
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         items = response.json().get("items", [])
         for item in items:
@@ -111,12 +144,18 @@ def github_get_email_from_commit_search(username):
 
 def github_get_email_from_repos(username):
     url = f"https://api.github.com/users/{username}/repos"
+    headers = {
+        "User-Agent": get_random_user_agent(user_agents)
+    }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         repos = response.json()
         for repo in repos:
             commits_url = repo['commits_url'].replace('{/sha}', '')
-            commits_response = requests.get(commits_url, headers=headers)
+            commits_headers = {
+                "User-Agent": get_random_user_agent(user_agents)
+            }
+            commits_response = requests.get(commits_url, headers=commits_headers)
             if commits_response.status_code == 200:
                 commits = commits_response.json()
                 for commit in commits:
@@ -164,13 +203,16 @@ def github_email_finder(username):
     print(Fore.GREEN + f"User ID      : {user_id}")
     print("\n" + "-"*50)  
 
-    
     print(Fore.CYAN + f"[+] Sensitive Information:")
     print(Fore.CYAN + f"----------------------------")
+    
     if email:
-        print(Fore.YELLOW + f"Email        : {email}")
+        print(Fore.YELLOW + f"Leaked Mail        : {email}")
     else:
-        print(Fore.RED + f"Email not available or private.")
+        print(Fore.RED + f"Leaked Mail        : None")
+    
+    noreply_email = f"{user_id}+{username}@users.noreply.github.com"
+    print(Fore.YELLOW + f"Noreply Mail : {noreply_email}")
 
 if __name__ == '__main__':
     while True:
