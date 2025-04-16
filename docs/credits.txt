@@ -1,0 +1,29 @@
+
+
+                                        __  _____________  __  _______   ___ 
+                                       /  |/  / ____/ __ \/ / / /__  /  /   |
+                                      / /|_/ / __/ / / / / / / /  / /  / /| |
+                                     / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
+                                    /_/  /_/_____/_____/\____/  /____/_/  |_|
+                                         
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+
+Developer:
+-------------
+Malveillance - Creator and Developer of Meduza.
+
+Libraries & Tools:
+-------------------
+- **requests**: Python HTTP library for making requests to APIs and third-party websites.
+- **colorama**: A Python library for adding colored text to terminal output.
+- **re**: Python's built-in library for regular expressions, used for extracting emails.
+
+Third-Party Services:
+----------------------
+- **GitHub API**: Used for fetching public user events, profile details, and repositories.
+- **emailaddress.github.io**: A third-party service for finding emails associated with GitHub usernames.
+
