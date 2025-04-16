@@ -11,5 +11,8 @@ CHANGELOG:
 - Version 1.9 : new strategies adopted
 - Version 2.0 : 2 other startegy aded
 - Version 2.1 : folders added
-- Version 2.2 : This version
+- Version 2.2 : githubapi added with useragents.txt
+- Version 2.3 : code updated
+- Version 2.4 : UA Switched
+- Version 2.5 : This version
 
