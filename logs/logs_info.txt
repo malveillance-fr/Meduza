@@ -1,0 +1,1 @@
+In this folder, each lookup performed is recorded: example with a lookup on johndoe: johndoe.json, containing the output of the lookup
