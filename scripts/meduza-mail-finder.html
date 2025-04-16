@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meduza Email Finder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1d1f20;
+            color: #f1c40f;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #f1c40f;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #2c3e50;
+            border-radius: 5px;
+            color: #ecf0f1;
+        }
+
+        #loading {
+            display: none;
+            font-size: 18px;
+            color: #f1c40f;
+        }
+
+        .input-container {
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #f1c40f;
+            border-radius: 5px;
+            color: #f1c40f;
+            background-color: #1d1f20;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #f1c40f;
+            border: none;
+            color: #1d1f20;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Meduza Email Finder</h1>
+
+<p>Find emails on GitHub based on the username you provide.</p>
+
+<div class="input-container">
+    <input type="text" id="username" placeholder="Enter GitHub Username">
+    <button onclick="findEmail()">Find Email</button>
+</div>
+
+<p id="loading">Loading...</p>
+<div id="result"></div>
+
+<script>
+    async function findEmail() {
+        let username = document.getElementById('username').value.trim();
+        if (username === '') {
+            alert('Please enter a username');
+            return;
+        }
+
+        document.getElementById('result').innerHTML = '';
+        document.getElementById('loading').style.display = 'inline-block';
+
+        const headers = {
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "Meduza-Email-Finder"
+        };
+
+        try {
+            let email = await getEmailFromProfile(username, headers);
+            if (!email) {
+                email = await getEmailFromEvents(username, headers);
+            }
+            if (!email) {
+                email = await getEmailFromCommitSearch(username, headers);
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            if (email) {
+                document.getElementById('result').innerHTML = `<p>Email found: <b>${email}</b></p>`;
+            } else {
+                document.getElementById('result').innerHTML = '<p>No email found or email is private.</p>';
+            }
+        } catch (error) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').innerHTML = '<p>Error occurred while searching for the email.</p>';
+        }
+    }
+
+    async function getEmailFromProfile(username, headers) {
+        const url = `https://api.github.com/users/${username}`;
+        const response = await fetch(url, { headers });
+        if (response.ok) {
+            const data = await response.json();
+            return data.email;
+        }
+        return null;
+    }
+
+    async function getEmailFromEvents(username, headers) {
+        const url = `https://api.github.com/users/${username}/events/public`;
+        const response = await fetch(url, { headers });
+        if (response.ok) {
+            const events = await response.json();
+            for (const event of events) {
+                if (event.type === 'PushEvent') {
+                    const commits = event.payload.commits || [];
+                    for (const commit of commits) {
+                        const email = commit.author.email;
+                        if (email && !email.includes('noreply')) {
+                            return email;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    async function getEmailFromCommitSearch(username, headers) {
+        const url = `https://api.github.com/search/commits?q=author:${username}`;
+        const response = await fetch(url, {
+            headers: {
+                ...headers,
+                "Accept": "application/vnd.github.cloak-preview"
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            const commits = data.items || [];
+            for (const item of commits) {
+                const email = item.commit.author.email;
+                if (email && !email.includes('noreply')) {
+                    return email;
+                }
+            }
+        }
+        return null;
+    }
+</script>
+
+</body>
+</html>
