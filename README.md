@@ -1,4 +1,5 @@
-![image](https://github.com/user-attachments/assets/7fd38170-ea2d-4854-a36a-bf93ddda52c8)
+![image](https://github.com/user-attachments/assets/ec3e9446-7c60-4b50-8fe7-3c67c43b8540)
+
 
 
 ```
@@ -97,6 +98,9 @@ This tool is intended for **educational and ethical use only**. Accessing or att
 
 ---
 
+Only 60 request per hour.
+
+---
 ## 📌 License
 
 This project is open-source and available under the [MIT License](LICENSE).
