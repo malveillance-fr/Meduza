@@ -11,19 +11,23 @@ import json
 init(autoreset=True)
 os.system("title Meduza Terminal")
 
-ascii_art = r"""
-                                            
-
-                                     
-
-
-                                                  __  _____________  __  _______   ___ 
-                                                 /  |/  / ____/ __ \/ / / /__  /  /   |
-                                                / /|_/ / __/ / / / / / / /  / /  / /| |
-                                               / /  / / /___/ /_/ / /_/ /  / /__/ ___ |
-                                              /_/  /_/_____/_____/\____/  /____/_/  |_|
-                                                  
-
+ascii_art = r"""                                                                                                                    
+ ┳┳┓┏┓┳┓┳┳┏┓┏┓
+ ┃┃┃┣ ┃┃┃┃┏┛┣┫
+ ┛ ┗┗┛┻┛┗┛┗┛┛┗
+┏┳┓┏┓┳┓┳┳┓┳┳┓┏┓┓ 
+ ┃ ┣ ┣┫┃┃┃┃┃┃┣┫┃ 
+ ┻ ┗┛┛┗┛ ┗┻┛┗┛┗┗┛
+                                                                                                       
+                      
+                           ____    ____  ________  ______   _____  _____  ________       _       
+                          |_   \  /   _||_   __  ||_   _ `.|_   _||_   _||  __   _|     / \      
+                            |   \/   |    | |_ \_|  | | `. \ | |    | |  |_/  / /      / _ \     
+                            | |\  /| |    |  _| _   | |  | | | '    ' |     .'.' _    / ___ \    
+                            | |_\/_| |_  _| |__/ | _| |_.' /  \ \__/ /    _/ /__/ | _/ /   \ \_  
+                          |_____||_____||________||______.'    `.__.'    |________||____| |____| 
+                                                                                                                   
+                                  
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
                        [%] STATUS : Work
                        [%] Developer : Malveillance
@@ -101,17 +105,20 @@ def github_get_email_from_events(username):
     headers = {
         "User-Agent": get_random_user_agent(user_agents)
     }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        events = response.json()
-        for event in events:
-            if event.get('type') == 'PushEvent':
-                commits = event.get('payload', {}).get('commits', [])
-                for commit in commits:
-                    author = commit.get('author', {})
-                    email = author.get('email')
-                    if email and 'noreply' not in email:
-                        return email
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            events = response.json()
+            for event in events:
+                if event.get('type') == 'PushEvent':
+                    commits = event.get('payload', {}).get('commits', [])
+                    for commit in commits:
+                        author = commit.get('author', {})
+                        email = author.get('email')
+                        if email and 'noreply' not in email:
+                            return email
+    except requests.RequestException as e:
+        print(Fore.RED + f"Error fetching events for {username}: {e}")
     return None
 
 def github_get_email_from_emailaddress_site(username):
@@ -123,8 +130,8 @@ def github_get_email_from_emailaddress_site(username):
             for email in emails:
                 if "noreply" not in email:
                     return email
-    except:
-        pass
+    except requests.RequestException as e:
+        print(Fore.RED + f"Error fetching email from emailaddress.github.io for {username}: {e}")
     return None
 
 def github_get_email_from_commit_search(username):
@@ -133,15 +140,18 @@ def github_get_email_from_commit_search(username):
         "Accept": "application/vnd.github.cloak-preview",
         "User-Agent": get_random_user_agent(user_agents)
     }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        items = response.json().get("items", [])
-        for item in items:
-            commit = item.get("commit", {})
-            author = commit.get("author", {})
-            email = author.get("email")
-            if email and "noreply" not in email:
-                return email
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            items = response.json().get("items", [])
+            for item in items:
+                commit = item.get("commit", {})
+                author = commit.get("author", {})
+                email = author.get("email")
+                if email and "noreply" not in email:
+                    return email
+    except requests.RequestException as e:
+        print(Fore.RED + f"Error searching commits for {username}: {e}")
     return None
 
 def github_get_email_from_repos(username):
@@ -149,22 +159,25 @@ def github_get_email_from_repos(username):
     headers = {
         "User-Agent": get_random_user_agent(user_agents)
     }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        repos = response.json()
-        for repo in repos:
-            commits_url = repo['commits_url'].replace('{/sha}', '')
-            commits_headers = {
-                "User-Agent": get_random_user_agent(user_agents)
-            }
-            commits_response = requests.get(commits_url, headers=commits_headers)
-            if commits_response.status_code == 200:
-                commits = commits_response.json()
-                for commit in commits:
-                    author = commit.get("commit", {}).get("author", {})
-                    email = author.get("email")
-                    if email and "noreply" not in email:
-                        return email
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            repos = response.json()
+            for repo in repos:
+                commits_url = repo['commits_url'].replace('{/sha}', '')
+                commits_headers = {
+                    "User-Agent": get_random_user_agent(user_agents)
+                }
+                commits_response = requests.get(commits_url, headers=commits_headers)
+                if commits_response.status_code == 200:
+                    commits = commits_response.json()
+                    for commit in commits:
+                        author = commit.get("commit", {}).get("author", {})
+                        email = author.get("email")
+                        if email and "noreply" not in email:
+                            return email
+    except requests.RequestException as e:
+        print(Fore.RED + f"Error fetching repos for {username}: {e}")
     return None
 
 def github_email_finder(username):
@@ -206,7 +219,6 @@ def github_email_finder(username):
         "emails": list(found_emails)
     }
 
-
     log_directory = "logs"
     os.makedirs(log_directory, exist_ok=True)
     log_file_path = os.path.join(log_directory, f"{username}.json")
@@ -223,20 +235,21 @@ def github_email_finder(username):
     print(Fore.GREEN + f"Last Update  : {last_update}")
     print(Fore.GREEN + f"Created At   : {created_at}")
     print(Fore.GREEN + f"User ID      : {user_id}")
-    print("\n" + "-"*50)  
+    print("\n" + "-"*50)
 
     print(Fore.CYAN + f"[+] Sensitive Information:")
     print(Fore.CYAN + f"----------------------------")
-    
+
     if found_emails:
         print(Fore.YELLOW + f"[+] Mails Found: {len(found_emails)}")
         for index, email in enumerate(found_emails, 1):
-            print(Fore.YELLOW + f"\n[{index}] Leaked Mail : {email}")
+            print(Fore.YELLOW + f"\n[{index}] Leaked Mail{Fore.WHITE}...............{Fore.YELLOW}{email}")  
     else:
-        print(Fore.RED + "Leaked Mail : None")
-    
+        print(Fore.RED + "Leaked Mail :............... None")
+
     noreply_email = f"{user_id}+{username}@users.noreply.github.com"
-    print(Fore.YELLOW + f"\nNoreply Mail    : {noreply_email}")
+    print(Fore.YELLOW + f"\nNoreply Mail{Fore.WHITE}...............{Fore.YELLOW}{noreply_email}")  
+
 
 if __name__ == '__main__':
     while True:
