@@ -111,7 +111,7 @@ This tool is intended for **educational and ethical use only**. Accessing or att
 
 ## 👨‍💻 Developer
 
-- Name: **Malveillance**
+- Name: **KAZAM**
 - Tool: **Meduza**
 - Status: `Working ✅`
 
