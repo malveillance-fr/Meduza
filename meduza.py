@@ -7,30 +7,30 @@ import threading
 import os
 import random
 import json
+from bs4 import BeautifulSoup
 
 init(autoreset=True)
 os.system("title Meduza Terminal")
 
-ascii_art = r"""                                                                                                                    
+ascii_art = r"""
  ┳┳┓┏┓┳┓┳┳┏┓┏┓
  ┃┃┃┣ ┃┃┃┃┏┛┣┫
  ┛ ┗┗┛┻┛┗┛┗┛┛┗
-┏┳┓┏┓┳┓┳┳┓┳┳┓┏┓┓ 
- ┃ ┣ ┣┫┃┃┃┃┃┃┣┫┃ 
- ┻ ┗┛┛┗┛ ┗┻┛┗┛┗┗┛
-                                                                                                       
-                      
-                           ____    ____  ________  ______   _____  _____  ________       _       
-                          |_   \  /   _||_   __  ||_   _ `.|_   _||_   _||  __   _|     / \      
-                            |   \/   |    | |_ \_|  | | `. \ | |    | |  |_/  / /      / _ \     
-                            | |\  /| |    |  _| _   | |  | | | '    ' |     .'.' _    / ___ \    
-                            | |_\/_| |_  _| |__/ | _| |_.' /  \ \__/ /    _/ /__/ | _/ /   \ \_  
-                          |_____||_____||________||______.'    `.__.'    |________||____| |____| 
-                                                                                                                   
-                                  
-                       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+┏┳┓┏┓┳┓┳┳┓┳┳┓┏┓┓
+ ┃ ┣ ┣┫┃┃┃┃┃┃┣┫┃
+ ┻ ┗┛┛┗┛ ┗┻┛┗┛┗┗┛                 _______  _______  ______            _______  _______ 
+                                 (       )(  ____ \(  __  \ |\     /|/ ___   )(  ___  )
+                                 | () () || (    \/| (  \  )| )   ( |\/   )  || (   ) |
+                                 | || || || (__    | |   ) || |   | |    /   )| (___) |
+                                 | |(_)| ||  __)   | |   | || |   | |   /   / |  ___  |
+                                 | |   | || (      | |   ) || |   | |  /   /  | (   ) |
+                                 | )   ( || (____/\| (__/  )| (___) | /   (_/\| )   ( |
+                                 |/     \|(_______/(______/ (_______)(_______/|/     \|
+                                                      
+
+                       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                        [%] STATUS : Work
-                       [%] Developer : Malveillance
+                       [%] Developer : KAZAM
                        [%] Platform Supported : Windows
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -69,7 +69,7 @@ def load_user_agents_from_file(file_path):
 
 def get_random_user_agent(user_agents):
     if not user_agents:
-        return None 
+        return None
     return random.choice(user_agents)
 
 user_agents_file_path = "githubapi/useragents.txt"
@@ -86,19 +86,18 @@ def github_get_user_info(username):
         "User-Agent": get_random_user_agent(user_agents)
     }
     response = requests.get(url, headers=headers)
-    print(f"Response Status: {response.status_code}") 
+    print(f"Response Status: {response.status_code}")
     if response.status_code == 200:
         data = response.json()
         globalname = data.get("name") or username
-        bio = data.get("bio")
         displayname = data.get("login")
         avatar_url = data.get("avatar_url")
         last_update = data.get("updated_at")
         created_at = data.get("created_at")
         user_id = data.get("id")
         email = data.get("email")
-        return globalname, bio, displayname, avatar_url, last_update, created_at, user_id, email
-    return username, None, None, None, None, None, None, None
+        return globalname, displayname, avatar_url, last_update, created_at, user_id, email
+    return username, None, None, None, None, None, None
 
 def github_get_email_from_events(username):
     url = f"https://api.github.com/users/{username}/events/public"
@@ -180,8 +179,31 @@ def github_get_email_from_repos(username):
         print(Fore.RED + f"Error fetching repos for {username}: {e}")
     return None
 
+def github_advanced_search(username, repos):
+    phone_numbers = set()
+    pro_emails = set()
+
+    phone_pattern = re.compile(r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b')
+    email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+
+    for repo in repos:
+        readme_url = f"https://raw.githubusercontent.com/{username}/{repo}/master/README.md"
+        try:
+            response = requests.get(readme_url)
+            if response.status_code == 200:
+                readme_content = response.text
+                phone_numbers.update(phone_pattern.findall(readme_content))
+                emails = email_pattern.findall(readme_content)
+                # Filter out placeholder emails
+                filtered_emails = [email for email in emails if not email.endswith('@example.com') and not email.endswith('@exemple.com')]
+                pro_emails.update(filtered_emails)
+        except requests.RequestException as e:
+            print(Fore.RED + f"Error fetching README for {repo}: {e}")
+
+    return list(phone_numbers), list(pro_emails)
+
 def github_email_finder(username):
-    globalname, bio, displayname, avatar_url, last_update, created_at, user_id, profile_email = github_get_user_info(username)
+    globalname, displayname, avatar_url, last_update, created_at, user_id, profile_email = github_get_user_info(username)
 
     stop_event = threading.Event()
     loading_thread = threading.Thread(target=loading_animation, args=(stop_event,))
@@ -203,20 +225,32 @@ def github_email_finder(username):
     if profile_email:
         found_emails.add(profile_email)
 
+    repos_url = f"https://api.github.com/users/{username}/repos"
+    headers = {
+        "User-Agent": get_random_user_agent(user_agents)
+    }
+    response = requests.get(repos_url, headers=headers)
+    repos = [repo['name'] for repo in response.json()] if response.status_code == 200 else []
+
+    phone_numbers, pro_emails = github_advanced_search(username, repos)
+
     stop_event.set()
     loading_thread.join()
 
     result = {
         "profile_info": {
             "name": globalname,
-            "bio": bio if bio else 'No bio available',
             "username": displayname,
             "avatar_url": avatar_url,
             "last_update": last_update,
             "created_at": created_at,
             "user_id": user_id
         },
-        "emails": list(found_emails)
+        "emails": list(found_emails),
+        "advanced_search": {
+            "phone_numbers": phone_numbers,
+            "pro_emails": pro_emails
+        }
     }
 
     log_directory = "logs"
@@ -228,28 +262,44 @@ def github_email_finder(username):
     print("\n" + "-"*50)
     print(Fore.CYAN + f"[+] GitHub Profile Information")
     print(Fore.CYAN + f"-------------------------------")
-    print(Fore.GREEN + f"Name         : {globalname}")
-    print(Fore.GREEN + f"Bio          : {bio if bio else 'No bio available'}")
-    print(Fore.GREEN + f"Username     : {displayname}")
-    print(Fore.GREEN + f"Avatar URL   : {avatar_url}")
-    print(Fore.GREEN + f"Last Update  : {last_update}")
-    print(Fore.GREEN + f"Created At   : {created_at}")
-    print(Fore.GREEN + f"User ID      : {user_id}")
+    print(Fore.GREEN + f"Name{Fore.WHITE}............: {Fore.GREEN}{globalname}")
+    print(Fore.GREEN + f"Username{Fore.WHITE}............: {Fore.GREEN}{displayname}")
+    print(Fore.GREEN + f"Avatar URL{Fore.WHITE}............: {Fore.GREEN}{avatar_url}")
+    print(Fore.GREEN + f"Last Update{Fore.WHITE}............: {Fore.GREEN}{last_update}")
+    print(Fore.GREEN + f"Created At{Fore.WHITE}............: {Fore.GREEN}{created_at}")
+    print(Fore.GREEN + f"User ID{Fore.WHITE}............: {Fore.GREEN}{user_id}")
     print("\n" + "-"*50)
 
     print(Fore.CYAN + f"[+] Sensitive Information:")
     print(Fore.CYAN + f"----------------------------")
 
     if found_emails:
-        print(Fore.YELLOW + f"[+] Mails Found: {len(found_emails)}")
+        print(Fore.YELLOW + f"Leaked Mail{Fore.WHITE}............: {Fore.YELLOW}{len(found_emails)}\n")
         for index, email in enumerate(found_emails, 1):
-            print(Fore.YELLOW + f"\n[{index}] Leaked Mail{Fore.WHITE}...............{Fore.YELLOW}{email}")  
+            print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{email}")
     else:
-        print(Fore.RED + "Leaked Mail :............... None")
+        print(Fore.RED + "\nLeaked Mail{Fore.WHITE}............: None\n")
 
     noreply_email = f"{user_id}+{username}@users.noreply.github.com"
-    print(Fore.YELLOW + f"\nNoreply Mail{Fore.WHITE}...............{Fore.YELLOW}{noreply_email}")  
+    print(Fore.YELLOW + f"\nNoreply Mail{Fore.WHITE}............:{Fore.YELLOW}{noreply_email}")
 
+    print("\n" + "-"*50)
+    print(Fore.CYAN + f"[+] Advanced Search:")
+    print(Fore.CYAN + f"----------------------------")
+
+    if phone_numbers:
+        print(Fore.YELLOW + f"Phone Numbers{Fore.WHITE}............: {Fore.YELLOW}{len(phone_numbers)}")
+        for index, phone in enumerate(phone_numbers, 1):
+            print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{phone}")
+    else:
+        print(Fore.RED + "Phone Number............: None")
+
+    if pro_emails:
+        print(Fore.YELLOW + f"Other Mails{Fore.WHITE}............: {Fore.YELLOW}{len(pro_emails)}\n")
+        for index, pro_email in enumerate(pro_emails, 1):
+            print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{pro_email}")
+    else:
+        print(Fore.RED + "Other Mails............: None")
 
 if __name__ == '__main__':
     while True:
