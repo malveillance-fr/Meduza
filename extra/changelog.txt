@@ -17,3 +17,4 @@ CHANGELOG:
 - Version 2.5 : Technology updated
 - Version 2.6 : logs system added
 - Version 2.7 : interface updated
+- Version 2.8 : Advanced search add
