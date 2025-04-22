@@ -67,19 +67,39 @@ exit
 ## 📜 Example Output
 
 ```
+--------------------------------------------------
 [+] GitHub Profile Information
 -------------------------------
-Name         : John Doe
-Bio          : Open source enthusiast 🚀
-Username     : johndoe
-Avatar URL   : https://avatars.githubusercontent.com/u/12345678
-Last Update  : 2024-06-01T10:00:00Z
-Created At   : 2018-03-12T14:32:00Z
-User ID      : 12345678
+Name............: Google
+Username............: google
+Avatar URL............: https://avatars.githubusercontent.com/u/1342004?v=4
+Last Update............: 2024-08-09T17:36:18Z
+Created At............: 2012-01-18T01:30:18Z
+User ID............: 1342004
 
+--------------------------------------------------
 [+] Sensitive Information:
 ----------------------------
-Email        : johndoe@example.com
+Leaked Mail............: 3
+
+[1]............: github-admin@google.com
+[2]............: skander@mobilitydata.org
+[3]............: opensource@google.com
+
+Noreply Mail............:1342004+google@users.noreply.github.com
+
+--------------------------------------------------
+[+] Advanced Search:
+----------------------------
+Phone Number............: None
+Other Mails............: 5
+
+[1]............: jsonp@google.com
+[2]............: claymore@google.com
+[3]............: matir@google.com
+[4]............: 1234567890123-abcdefghijklmnopqrstuvwxz01234567@developer.gserviceaccount.com
+[5]............: admin@yourdomain.com
+
 ```
 
 ---
