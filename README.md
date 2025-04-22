@@ -2,7 +2,6 @@
 
 
 
-```
 # 🪼 Meduza - GitHub Email & Profile Lookup Tool
 
 **Meduza** is a powerful command-line tool designed to fetch public (and sometimes sensitive) GitHub user information, including email addresses when available. It uses multiple techniques to increase the chances of locating a valid, non-noreply email address associated with a GitHub username.
