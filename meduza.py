@@ -194,8 +194,7 @@ def github_advanced_search(username, repos):
                 readme_content = response.text
                 phone_numbers.update(phone_pattern.findall(readme_content))
                 emails = email_pattern.findall(readme_content)
-                # Filter out placeholder emails
-                filtered_emails = [email for email in emails if not email.endswith('@example.com') and not email.endswith('@exemple.com')]
+                filtered_emails = [email for email in emails if 'example' not in email.lower() and 'exemple' not in email.lower()]
                 pro_emails.update(filtered_emails)
         except requests.RequestException as e:
             print(Fore.RED + f"Error fetching README for {repo}: {e}")
