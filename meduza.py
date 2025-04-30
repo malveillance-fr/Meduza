@@ -32,6 +32,7 @@ ascii_art = r"""
                        [%] STATUS : Work
                        [%] Developer : KAZAM
                        [%] Platform Supported : Windows
+                       [%] REQUESTS PER HOUR : 60
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
                                  🪼 >> Meduza is a powerful GitHub lookup tool. << 🪼
@@ -200,6 +201,22 @@ def github_advanced_search(username, repos):
             print(Fore.RED + f"Error fetching README for {repo}: {e}")
 
     return list(phone_numbers), list(pro_emails)
+    
+def obfuscate_email(email):
+    if email:
+        local, domain = email.split('@')
+        local_obf = local[0] + '*' * (len(local) - 1)
+        
+        domain_parts = domain.split('.')
+        if len(domain_parts) > 1:
+            domain_name = domain_parts[0]
+            domain_extension = '.'.join(domain_parts[1:])
+            domain_obf = domain_name[0] + '*' * (len(domain_name) - 1) + '.' + domain_extension
+        else:
+            domain_obf = domain_parts[0]
+        
+        return local_obf + '@' + domain_obf
+    return email
 
 def github_email_finder(username):
     globalname, displayname, avatar_url, last_update, created_at, user_id, profile_email = github_get_user_info(username)
@@ -276,11 +293,17 @@ def github_email_finder(username):
         print(Fore.YELLOW + f"Leaked Mail{Fore.WHITE}............: {Fore.YELLOW}{len(found_emails)}\n")
         for index, email in enumerate(found_emails, 1):
             print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{email}")
+        print(Fore.YELLOW + f"\nObfuscated Mail{Fore.WHITE}............:\n")
+        for index, email in enumerate(found_emails, 1):
+            obfuscated_email = obfuscate_email(email)
+            print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{obfuscated_email}")
     else:
         print(Fore.RED + "\nLeaked Mail{Fore.WHITE}............: None\n")
 
     noreply_email = f"{user_id}+{username}@users.noreply.github.com"
-    print(Fore.YELLOW + f"\nNoreply Mail{Fore.WHITE}............:{Fore.YELLOW}{noreply_email}")
+    print(Fore.YELLOW + f"\nNoreply Mail{Fore.WHITE}............:{Fore.YELLOW}{noreply_email}\n")
+    obfuscated_noreply_email = obfuscate_email(noreply_email)
+    print(Fore.YELLOW + f"\nObfuscated Noreply Mail{Fore.WHITE}............:{Fore.YELLOW}{obfuscated_noreply_email}")
 
     print("\n" + "-"*50)
     print(Fore.CYAN + f"[+] Advanced Search:")
