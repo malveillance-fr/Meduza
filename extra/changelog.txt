@@ -18,3 +18,5 @@ CHANGELOG:
 - Version 2.6 : logs system added
 - Version 2.7 : interface updated
 - Version 2.8 : Advanced search add
+- Version 2.9 : added obfuscated mail
+- Version 3.0 : Phone numbers display changed
