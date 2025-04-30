@@ -291,10 +291,10 @@ def github_email_finder(username):
         for index, phone in enumerate(phone_numbers, 1):
             print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{phone}")
     else:
-        print(Fore.RED + "Phone Number............: None")
+        print(Fore.RED + "Phone Number............: None\n")
 
     if pro_emails:
-        print(Fore.YELLOW + f"Other Mails{Fore.WHITE}............: {Fore.YELLOW}{len(pro_emails)}\n")
+        print(Fore.YELLOW + f"\nOther Mails{Fore.WHITE}............: {Fore.YELLOW}{len(pro_emails)}\n")
         for index, pro_email in enumerate(pro_emails, 1):
             print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{pro_email}")
     else:
