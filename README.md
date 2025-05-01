@@ -81,9 +81,9 @@ User ID............: 1342004
 ----------------------------
 Leaked Mail............: 3
 
-[1]............: github-admin@google.com
-[2]............: skander@mobilitydata.org
-[3]............: opensource@google.com
+[1]............: mail@exemple.com
+[2]............: mail@exemple.com
+[3]............: mail@exemple.com
 
 Noreply Mail............:1342004+google@users.noreply.github.com
 
@@ -93,11 +93,11 @@ Noreply Mail............:1342004+google@users.noreply.github.com
 Phone Number............: None
 Other Mails............: 5
 
-[1]............: jsonp@google.com
-[2]............: claymore@google.com
-[3]............: matir@google.com
-[4]............: 1234567890123-abcdefghijklmnopqrstuvwxz01234567@developer.gserviceaccount.com
-[5]............: admin@yourdomain.com
+[1]............: mail@exemple.com
+[2]............: mail@exemple.com
+[3]............: mail@exemple.com
+[4]............: mail@exemple.com
+[5]............: mail@exemple.com
 
 ```
 
