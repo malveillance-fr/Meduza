@@ -18,12 +18,15 @@
   - Account creation date
   - Last update
   - User ID
+
 - 📧 Attempts to extract email using multiple methods:
+
   - Public events
   - GitHub commit history
   - External email resolver (`emailaddress.github.io`)
   - Repositories and associated commits
 
+88% chance of extracting a mail
 ---
 
 ## 🖥️ Supported Platforms
