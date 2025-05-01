@@ -40,7 +40,7 @@
 1. Clone this repository:
    ```bash
    git clone https://github.com/malveillance-fr/Meduza.git
-   cd Meduza
+   cd Meduza-Main-3.0
    ```
 
 2. Install required dependencies:
