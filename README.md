@@ -88,7 +88,7 @@ Leaked Mail............: 3
 [2]............: mail@exemple.com
 [3]............: mail@exemple.com
 
-Noreply Mail............:1342004+google@users.noreply.github.com
+Noreply Mail............:noreply@exemple.com
 
 --------------------------------------------------
 [+] Advanced Search:
