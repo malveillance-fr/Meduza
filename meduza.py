@@ -18,16 +18,18 @@ ascii_art = r"""
  ┛ ┗┗┛┻┛┗┛┗┛┛┗
 ┏┳┓┏┓┳┓┳┳┓┳┳┓┏┓┓
  ┃ ┣ ┣┫┃┃┃┃┃┃┣┫┃
- ┻ ┗┛┛┗┛ ┗┻┛┗┛┗┗┛                 _______  _______  ______            _______  _______ 
-                                 (       )(  ____ \(  __  \ |\     /|/ ___   )(  ___  )
-                                 | () () || (    \/| (  \  )| )   ( |\/   )  || (   ) |
-                                 | || || || (__    | |   ) || |   | |    /   )| (___) |
-                                 | |(_)| ||  __)   | |   | || |   | |   /   / |  ___  |
-                                 | |   | || (      | |   ) || |   | |  /   /  | (   ) |
-                                 | )   ( || (____/\| (__/  )| (___) | /   (_/\| )   ( |
-                                 |/     \|(_______/(______/ (_______)(_______/|/     \|
-                                                      
+ ┻ ┗┛┛┗┛ ┗┻┛┗┛┗┗┛
 
+                                         
+
+                         ___      ___   _______  ________   ____  ____  ________        __      
+                        |"  \    /"  | /"     "||"      "\ ("  _||_ " |("      "\      /""\     
+                         \   \  //   |(: ______)(.  ___  :)|   (  ) : | \___/   :)    /    \    
+                         /\\  \/.    | \/    |  |: \   ) ||(:  |  | . )   /  ___/    /' /\  \   
+                        |: \.        | // ___)_ (| (___\ || \\ \__/ //   //  \__    //  __'  \  
+                        |.  \    /:  |(:      "||:       :) /\\ __ //\  (:   / "\  /   /  \\  \ 
+                        |___|\__/|___| \_______)(________/ (__________)  \_______)(___/    \___)
+                                                                        
                        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                        [%] STATUS : Work
                        [%] Developer : KAZAM
@@ -180,6 +182,43 @@ def github_get_email_from_repos(username):
         print(Fore.RED + f"Error fetching repos for {username}: {e}")
     return None
 
+def github_get_emails_from_patch_commits(username):
+    patch_emails = set()
+    url = f"https://api.github.com/users/{username}/repos"
+    headers = {
+        "User-Agent": get_random_user_agent(user_agents)
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            repos = response.json()
+            for repo in repos:
+                commits_url = repo['commits_url'].replace('{/sha}', '')
+                commits_headers = {
+                    "User-Agent": get_random_user_agent(user_agents)
+                }
+                commits_response = requests.get(commits_url, headers=commits_headers)
+                if commits_response.status_code == 200:
+                    commits = commits_response.json()
+                    for commit in commits:
+                        # Check if commit has a patch file
+                        if 'files' in commit:
+                            for file in commit['files']:
+                                if file['filename'].endswith('.patch'):
+                                    # Get the patch content
+                                    patch_url = file['patch_url']
+                                    patch_response = requests.get(patch_url, headers=commits_headers)
+                                    if patch_response.status_code == 200:
+                                        patch_content = patch_response.text
+                                        # Find all text between < and >
+                                        matches = re.findall(r'<([^>]+)>', patch_content)
+                                        # Filter matches that contain @
+                                        email_matches = [match for match in matches if '@' in match]
+                                        patch_emails.update(email_matches)
+    except requests.RequestException as e:
+        print(Fore.RED + f"Error fetching patch commits for {username}: {e}")
+    return list(patch_emails)
+
 def github_advanced_search(username, repos):
     phone_numbers = set()
     pro_emails = set()
@@ -201,12 +240,12 @@ def github_advanced_search(username, repos):
             print(Fore.RED + f"Error fetching README for {repo}: {e}")
 
     return list(phone_numbers), list(pro_emails)
-    
+
 def obfuscate_email(email):
     if email:
         local, domain = email.split('@')
         local_obf = local[0] + '*' * (len(local) - 1)
-        
+
         domain_parts = domain.split('.')
         if len(domain_parts) > 1:
             domain_name = domain_parts[0]
@@ -214,7 +253,7 @@ def obfuscate_email(email):
             domain_obf = domain_name[0] + '*' * (len(domain_name) - 1) + '.' + domain_extension
         else:
             domain_obf = domain_parts[0]
-        
+
         return local_obf + '@' + domain_obf
     return email
 
@@ -249,6 +288,7 @@ def github_email_finder(username):
     repos = [repo['name'] for repo in response.json()] if response.status_code == 200 else []
 
     phone_numbers, pro_emails = github_advanced_search(username, repos)
+    patch_emails = github_get_emails_from_patch_commits(username)
 
     stop_event.set()
     loading_thread.join()
@@ -265,7 +305,8 @@ def github_email_finder(username):
         "emails": list(found_emails),
         "advanced_search": {
             "phone_numbers": phone_numbers,
-            "pro_emails": pro_emails
+            "pro_emails": pro_emails,
+            "patch_emails": patch_emails
         }
     }
 
@@ -320,8 +361,14 @@ def github_email_finder(username):
         print(Fore.YELLOW + f"\nOther Mails{Fore.WHITE}............: {Fore.YELLOW}{len(pro_emails)}\n")
         for index, pro_email in enumerate(pro_emails, 1):
             print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{pro_email}")
+
+    if patch_emails:
+        print(Fore.YELLOW + f"\nPatch Emails{Fore.WHITE}............: {Fore.YELLOW}{len(patch_emails)}\n")
+        for index, patch_email in enumerate(patch_emails, 1):
+            print(Fore.YELLOW + f"[{index}]{Fore.WHITE}............: {Fore.YELLOW}{patch_email}")
     else:
         print(Fore.RED + "Other Mails............: None")
+        print(Fore.RED + "Patch Emails............: None")
 
 if __name__ == '__main__':
     while True:
@@ -329,4 +376,3 @@ if __name__ == '__main__':
         if username.lower() == 'exit':
             break
         github_email_finder(username)
-
