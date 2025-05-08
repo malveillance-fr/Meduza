@@ -23,3 +23,9 @@ CHANGELOG:
 - Version 3.1 : Patch Mail added
 - Version 3.2 : ASCII ART CHANGED
 - Version 3.3 : Status code FAQ added
+- Version 3.4 : Code 'meduza' updated
+- Version 3.5 : core folder added
+- Version 3.6 : __init__.py file added
+- Version 3.7 : Branch type changed
+
+
