@@ -1,0 +1,12 @@
+============================================================
+
+🚫 [404] :: USER NOT FOUND
+    └─ The username you entered does not exist or cannot be accessed.
+
+🛑 [403] :: RATE LIMIT REACHED
+    └─ Too many requests. Wait before trying again.
+
+🟢 [202] :: USER FOUND
+    └─ Target user located. 
+
+============================================================
