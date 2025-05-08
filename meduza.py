@@ -91,7 +91,7 @@ def github_get_user_info(username):
         "User-Agent": get_random_user_agent(user_agents)
     }
     response = requests.get(url, headers=headers)
-    print(f"Response Status: {response.status_code}\n")
+    print(f"[/] Response Status: {response.status_code}\n")
     if response.status_code == 200:
         data = response.json()
         globalname = data.get("name") or username
