@@ -2,12 +2,14 @@ import requests
 from colorama import Fore, init
 import re
 import sys
+import meduza
 import time
 import threading
 import os
 import random
 import json
 from bs4 import BeautifulSoup
+
 
 init(autoreset=True)
 os.system("title Meduza Terminal")
@@ -89,7 +91,7 @@ def github_get_user_info(username):
         "User-Agent": get_random_user_agent(user_agents)
     }
     response = requests.get(url, headers=headers)
-    print(f"Response Status: {response.status_code}")
+    print(f"Response Status: {response.status_code}\n")
     if response.status_code == 200:
         data = response.json()
         globalname = data.get("name") or username
@@ -201,18 +203,18 @@ def github_get_emails_from_patch_commits(username):
                 if commits_response.status_code == 200:
                     commits = commits_response.json()
                     for commit in commits:
-                        # Check if commit has a patch file
+                       
                         if 'files' in commit:
                             for file in commit['files']:
                                 if file['filename'].endswith('.patch'):
-                                    # Get the patch content
+                                    
                                     patch_url = file['patch_url']
                                     patch_response = requests.get(patch_url, headers=commits_headers)
                                     if patch_response.status_code == 200:
                                         patch_content = patch_response.text
-                                        # Find all text between < and >
+                                      
                                         matches = re.findall(r'<([^>]+)>', patch_content)
-                                        # Filter matches that contain @
+                                       
                                         email_matches = [match for match in matches if '@' in match]
                                         patch_emails.update(email_matches)
     except requests.RequestException as e:
