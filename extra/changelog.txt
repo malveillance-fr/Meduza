@@ -22,3 +22,4 @@ CHANGELOG:
 - Version 3.0 : Phone numbers display changed
 - Version 3.1 : Patch Mail added
 - Version 3.2 : ASCII ART CHANGED
+- Version 3.3 : Status code FAQ added
