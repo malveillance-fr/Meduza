@@ -14,7 +14,7 @@
 
 Developer:
 -------------
-Malveillance - Creator and Developer of Meduza.
+Kazam - Creator and Developer of Meduza.
 
 Libraries & Tools:
 -------------------
