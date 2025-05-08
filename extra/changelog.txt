@@ -27,5 +27,6 @@ CHANGELOG:
 - Version 3.5 : core folder added
 - Version 3.6 : __init__.py file added
 - Version 3.7 : Branch type changed
+- Version 3.8 : launcher added
 
 
